@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.raywenderlich.placebook">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +25,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD_QYKFuccOiwKtWSgxt4Fb3Aqg_naEq-w" />
+            android:value="${MAPS_API_KEY}" />
 
         <activity
             android:name=".MapsActivity"
