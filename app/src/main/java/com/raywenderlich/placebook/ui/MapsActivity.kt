@@ -2,6 +2,7 @@ package com.raywenderlich.placebook.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -66,35 +67,55 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         placesClient = Places.createClient(this)
     }
 
+    private fun startBookmarkDetails(bookmarkId: Long) {
+        val intent = Intent(this, BookmarkDetailsActivity::class.java)
+        intent.putExtra(EXTRA_BOOKMARK_ID, bookmarkId)
+        startActivity(intent)
+    }
+
     private fun handleInfoWindowClick(marker: Marker) {
-        val placeInfo = (marker.tag as PlaceInfo)
-        if (placeInfo.place != null) { GlobalScope.launch { mapsViewModel.addBookmarkFromPlace(placeInfo.place, placeInfo.image) } }
-        marker.remove()
+        when (marker.tag) {
+            is PlaceInfo -> {
+                val placeInfo = (marker.tag as PlaceInfo)
+                if (placeInfo.place != null && placeInfo.image != null) {
+                    GlobalScope.launch { mapsViewModel.addBookmarkFromPlace(placeInfo.place, placeInfo.image) }
+                }
+                marker.remove();
+            }
+            is MapsViewModel.BookmarkMarkerView -> {
+                val bookmarkMarkerView = (marker.tag as MapsViewModel.BookmarkMarkerView)
+                marker.hideInfoWindow()
+                bookmarkMarkerView.id?.let { startBookmarkDetails(it) }
+            }
+        }
     }
 
     private fun addPlaceMarker(bookmark: MapsViewModel.BookmarkMarkerView): Marker? {
         val marker = map.addMarker(MarkerOptions()
             .position(bookmark.location)
+            .title(bookmark.name)
+            .snippet(bookmark.phone)
             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             .alpha(0.8f))
         marker?.tag = bookmark
         return marker
     }
 
+    //NOTE: moved argument out of parentheses may need to be moved back
     private fun createBookmarkMarkerObserver() {
         mapsViewModel.getBookmarkMarkerViews()?.observe(
             this,
-            {
-                map.clear()
-                it?.let { displayAllBookmarks(it) }
-            },
-        )
+        ) {
+            map.clear()
+            it?.let { displayAllBookmarks(it) }
+        }
     }
 
     private fun displayAllBookmarks(bookmarks: List<MapsViewModel.BookmarkMarkerView>) { bookmarks.forEach { addPlaceMarker(it) } }
 
     private fun displayPoi(pointOfInterest: PointOfInterest) { displayPoiGetPlaceStep(pointOfInterest) }
 
+    // Get all the places
     private fun displayPoiGetPlaceStep(pointOfInterest: PointOfInterest) {
         val placeId = pointOfInterest.placeId
         val placeFields = listOf(
@@ -117,6 +138,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    // Get the photo bitmap
     private fun displayPoiGetPhotoStep(place: Place) {
         val photoMetadata = place.photoMetadatas?.get(0)
         if (photoMetadata == null) {
@@ -139,6 +161,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
+    // Display the POI
     private fun displayPoiDisplayStep(place: Place, photo: Bitmap?)
     {
         val marker = map.addMarker(MarkerOptions()
@@ -147,7 +170,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .snippet(place.phoneNumber)
         )
         marker?.tag = PlaceInfo(place, photo)
+        marker?.showInfoWindow()
     }
+
+    private fun requestLocationPermissions() { ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION) }
 
     @SuppressLint("MissingSuperCall")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -177,11 +203,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun requestLocationPermissions() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION)
-    }
-
     companion object {
+        const val EXTRA_BOOKMARK_ID = "com.raywenderlich.placebook.EXTRA_BOOKMARK_ID"
         private const val REQUEST_LOCATION = 1
         private const val TAG = "MapsActivity"
     }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.raywenderlich.placebook">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.raywenderlich.placebook">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -12,7 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlaceBook">
-
+        <activity
+            android:name="com.raywenderlich.placebook.ui.BookmarkDetailsActivity"
+            android:label="Bookmark"
+            android:theme="@style/Theme.PlaceBook.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 

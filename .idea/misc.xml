@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Micah/OneDrive/Desktop/SPC/AndroidAppDevelopment/PlaceBook/app/src/main/res/layout/activity_bookmark_details.xml" value="0.25" />
         <entry key="..\:/Users/Micah/OneDrive/Desktop/SPC/AndroidAppDevelopment/PlaceBook/app/src/main/res/layout/activity_maps.xml" value="0.17760416666666667" />
         <entry key="..\:/Users/Micah/OneDrive/Desktop/SPC/AndroidAppDevelopment/PlaceBook/app/src/main/res/layout/content_bookmark_info.xml" value="0.2509057971014493" />
+        <entry key="..\:/Users/Micah/OneDrive/Desktop/SPC/AndroidAppDevelopment/PlaceBook/app/src/main/res/layout/main_view_maps.xml" value="0.28396739130434784" />
+        <entry key="..\:/Users/Micah/OneDrive/Desktop/SPC/AndroidAppDevelopment/PlaceBook/app/src/main/res/menu/menu_bookmark_details.xml" value="0.36614583333333334" />
       </map>
     </option>
   </component>

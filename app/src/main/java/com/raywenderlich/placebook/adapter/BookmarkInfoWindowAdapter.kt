@@ -7,8 +7,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import com.raywenderlich.placebook.databinding.ContentBookmarkInfoBinding
 import com.raywenderlich.placebook.ui.MapsActivity
+import com.raywenderlich.placebook.viewmodel.MapsViewModel
 
-class BookmarkInfoWindowAdapter(context: Activity) : GoogleMap.InfoWindowAdapter {
+class BookmarkInfoWindowAdapter(val context: Activity) : GoogleMap.InfoWindowAdapter {
     private val binding = ContentBookmarkInfoBinding.inflate(context.layoutInflater)
 
     // This function is required, but can return null if
@@ -19,7 +20,13 @@ class BookmarkInfoWindowAdapter(context: Activity) : GoogleMap.InfoWindowAdapter
         binding.title.text = marker.title ?: ""
         binding.phone.text = marker.snippet ?: ""
         val imageView = binding.photo
-        imageView.setImageBitmap((marker.tag as MapsActivity.PlaceInfo).image)
+        when (marker.tag) {
+            is MapsActivity.PlaceInfo -> { imageView.setImageBitmap((marker.tag as MapsActivity.PlaceInfo).image) }
+            is MapsViewModel.BookmarkMarkerView -> {
+                val bookMarkview = marker.tag as MapsViewModel.BookmarkMarkerView
+                imageView.setImageBitmap(bookMarkview.getImage(context))
+            }
+        }
         return binding.root
     }
 }
